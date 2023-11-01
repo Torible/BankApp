@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="BankBaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityContainer Name="BankBaseEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+    <EntitySet Name="Histories" EntityType="BankBaseModel.History" />
+    <EntitySet Name="Roles" EntityType="BankBaseModel.Role" />
+    <EntitySet Name="Users" EntityType="BankBaseModel.User" />
+    <AssociationSet Name="FK_History_Users" Association="BankBaseModel.FK_History_Users">
+      <End Role="User" EntitySet="Users" />
+      <End Role="History" EntitySet="Histories" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Users_Roles" Association="BankBaseModel.FK_Users_Roles">
+      <End Role="Role" EntitySet="Roles" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <EntitySet Name="Валюты" EntityType="BankBaseModel.Валюты" />
+    <EntitySet Name="Вклады" EntityType="BankBaseModel.Вклады" />
+    <EntitySet Name="Клиенты" EntityType="BankBaseModel.Клиенты" />
+    <EntitySet Name="Счета" EntityType="BankBaseModel.Счета" />
+    <EntitySet Name="Типы_вкладов" EntityType="BankBaseModel.Типы_вкладов" />
+    <AssociationSet Name="FK_Вклады_Валюты" Association="BankBaseModel.FK_Вклады_Валюты">
+      <End Role="Валюты" EntitySet="Валюты" />
+      <End Role="Вклады" EntitySet="Вклады" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Вклады_ТипыВкладов" Association="BankBaseModel.FK_Вклады_ТипыВкладов">
+      <End Role="Типы_вкладов" EntitySet="Типы_вкладов" />
+      <End Role="Вклады" EntitySet="Вклады" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Счета_Вклады" Association="BankBaseModel.FK_Счета_Вклады">
+      <End Role="Вклады" EntitySet="Вклады" />
+      <End Role="Счета" EntitySet="Счета" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Счета_Клиенты" Association="BankBaseModel.FK_Счета_Клиенты">
+      <End Role="Клиенты" EntitySet="Клиенты" />
+      <End Role="Счета" EntitySet="Счета" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="History">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Login" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="DateTime" Type="DateTime" Precision="3" />
+    <Property Name="Success" Type="Boolean" />
+    <NavigationProperty Name="User" Relationship="BankBaseModel.FK_History_Users" FromRole="History" ToRole="User" />
+  </EntityType>
+  <EntityType Name="Role">
+    <Key>
+      <PropertyRef Name="RoleID" />
+    </Key>
+    <Property Name="RoleID" Type="Int32" Nullable="false" />
+    <Property Name="Role1" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Users" Relationship="BankBaseModel.FK_Users_Roles" FromRole="Role" ToRole="User" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="Login" />
+    </Key>
+    <Property Name="Login" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="Password" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="RoleID" Type="Int32" />
+    <Property Name="ImageID" Type="Int32" />
+    <NavigationProperty Name="Histories" Relationship="BankBaseModel.FK_History_Users" FromRole="User" ToRole="History" />
+    <NavigationProperty Name="Role" Relationship="BankBaseModel.FK_Users_Roles" FromRole="User" ToRole="Role" />
+  </EntityType>
+  <Association Name="FK_History_Users">
+    <End Type="BankBaseModel.User" Role="User" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Type="BankBaseModel.History" Role="History" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Login" />
+      </Principal>
+      <Dependent Role="History">
+        <PropertyRef Name="Login" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Users_Roles">
+    <End Type="BankBaseModel.Role" Role="Role" Multiplicity="0..1" />
+    <End Type="BankBaseModel.User" Role="User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Role">
+        <PropertyRef Name="RoleID" />
+      </Principal>
+      <Dependent Role="User">
+        <PropertyRef Name="RoleID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Валюты">
+    <Key>
+      <PropertyRef Name="Код" />
+    </Key>
+    <Property Name="Код" Type="Int32" Nullable="false" />
+    <Property Name="Наименование" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Вклады" Relationship="BankBaseModel.FK_Вклады_Валюты" FromRole="Валюты" ToRole="Вклады" />
+  </EntityType>
+  <EntityType Name="Вклады">
+    <Key>
+      <PropertyRef Name="Код" />
+    </Key>
+    <Property Name="Код" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Наименование" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Срок" Type="Int32" />
+    <Property Name="Код_валюты" Type="Int32" />
+    <Property Name="Ставка" Type="Double" />
+    <Property Name="Код_типа_вклада" Type="Int32" />
+    <NavigationProperty Name="Валюты" Relationship="BankBaseModel.FK_Вклады_Валюты" FromRole="Вклады" ToRole="Валюты" />
+    <NavigationProperty Name="Типы_вкладов" Relationship="BankBaseModel.FK_Вклады_ТипыВкладов" FromRole="Вклады" ToRole="Типы_вкладов" />
+    <NavigationProperty Name="Счета" Relationship="BankBaseModel.FK_Счета_Вклады" FromRole="Вклады" ToRole="Счета" />
+  </EntityType>
+  <EntityType Name="Клиенты">
+    <Key>
+      <PropertyRef Name="Код" />
+    </Key>
+    <Property Name="Код" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ФИО" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Номер_паспорта" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="Адрес" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Телефон" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Счета" Relationship="BankBaseModel.FK_Счета_Клиенты" FromRole="Клиенты" ToRole="Счета" />
+  </EntityType>
+  <EntityType Name="Счета">
+    <Key>
+      <PropertyRef Name="Код" />
+    </Key>
+    <Property Name="Код" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Код_вклада" Type="Int32" />
+    <Property Name="Дата_открытия" Type="DateTime" Precision="0" />
+    <Property Name="Дата_закрытия" Type="DateTime" Precision="0" />
+    <Property Name="Сумма" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="Код_клиента" Type="Int32" />
+    <NavigationProperty Name="Вклады" Relationship="BankBaseModel.FK_Счета_Вклады" FromRole="Счета" ToRole="Вклады" />
+    <NavigationProperty Name="Клиенты" Relationship="BankBaseModel.FK_Счета_Клиенты" FromRole="Счета" ToRole="Клиенты" />
+  </EntityType>
+  <EntityType Name="Типы_вкладов">
+    <Key>
+      <PropertyRef Name="Код" />
+    </Key>
+    <Property Name="Код" Type="Int32" Nullable="false" />
+    <Property Name="Наименование" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="Снятие" Type="Boolean" Nullable="false" />
+    <Property Name="Пополнение" Type="Boolean" Nullable="false" />
+    <Property Name="Досрочное_закрытие" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Вклады" Relationship="BankBaseModel.FK_Вклады_ТипыВкладов" FromRole="Типы_вкладов" ToRole="Вклады" />
+  </EntityType>
+  <Association Name="FK_Вклады_Валюты">
+    <End Type="BankBaseModel.Валюты" Role="Валюты" Multiplicity="0..1" />
+    <End Type="BankBaseModel.Вклады" Role="Вклады" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Валюты">
+        <PropertyRef Name="Код" />
+      </Principal>
+      <Dependent Role="Вклады">
+        <PropertyRef Name="Код_валюты" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Вклады_ТипыВкладов">
+    <End Type="BankBaseModel.Типы_вкладов" Role="Типы_вкладов" Multiplicity="0..1" />
+    <End Type="BankBaseModel.Вклады" Role="Вклады" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Типы_вкладов">
+        <PropertyRef Name="Код" />
+      </Principal>
+      <Dependent Role="Вклады">
+        <PropertyRef Name="Код_типа_вклада" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Счета_Вклады">
+    <End Type="BankBaseModel.Вклады" Role="Вклады" Multiplicity="0..1" />
+    <End Type="BankBaseModel.Счета" Role="Счета" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Вклады">
+        <PropertyRef Name="Код" />
+      </Principal>
+      <Dependent Role="Счета">
+        <PropertyRef Name="Код_вклада" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Счета_Клиенты">
+    <End Type="BankBaseModel.Клиенты" Role="Клиенты" Multiplicity="0..1" />
+    <End Type="BankBaseModel.Счета" Role="Счета" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Клиенты">
+        <PropertyRef Name="Код" />
+      </Principal>
+      <Dependent Role="Счета">
+        <PropertyRef Name="Код_клиента" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

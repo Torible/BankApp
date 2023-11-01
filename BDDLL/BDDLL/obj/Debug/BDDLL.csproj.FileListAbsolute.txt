@@ -1,0 +1,6 @@
+E:\УП02\Отчёты\Работы\(6) DLL\BDDLL\BDDLL\bin\Debug\BDDLL.dll
+E:\УП02\Отчёты\Работы\(6) DLL\BDDLL\BDDLL\bin\Debug\BDDLL.pdb
+E:\УП02\Отчёты\Работы\(6) DLL\BDDLL\BDDLL\obj\Debug\BDDLL.csproj.AssemblyReference.cache
+E:\УП02\Отчёты\Работы\(6) DLL\BDDLL\BDDLL\obj\Debug\BDDLL.csproj.CoreCompileInputs.cache
+E:\УП02\Отчёты\Работы\(6) DLL\BDDLL\BDDLL\obj\Debug\BDDLL.dll
+E:\УП02\Отчёты\Работы\(6) DLL\BDDLL\BDDLL\obj\Debug\BDDLL.pdb
